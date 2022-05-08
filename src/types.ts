@@ -5,6 +5,7 @@ export type UserOrder = `${'logged-in' | 'created-at'}:${'asc' | 'desc'}`
 export type SponsorTier = 'trial' | 'free' | 'partner' | 'featured'
 export type SponsorStatus = 'active' | 'disabled'
 export type ListingStatus = 'available' | 'sold'
+export type CampaignKey = 'vertical-sponsor-sidebar' | 'featured-category-hero' | 'listing-grid-item'
 
 export interface GeoPoint {
   longitude: number
@@ -32,6 +33,7 @@ export interface User {
   phone: string
   role: UserRole
   lastLoggedInAt: number
+  location: GeoLocation
 }
 
 export type Category = {
@@ -54,7 +56,7 @@ export type Sponsor = {
 export interface SponsorCampaign {
   name: string
   key: string
-  image: null | Asset
+  images: Asset[]
   video: null | Omit<Asset, 'id'>
   title: null | string
   subtext: null | string
@@ -81,4 +83,5 @@ export type Listing = {
   user: Pick<User, 'id' | 'fullName'>
   addedAt: number
   updatedAt: number
+  expiresAt: number
 }

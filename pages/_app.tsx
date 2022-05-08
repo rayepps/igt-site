@@ -11,6 +11,7 @@ import useAnalytics from 'src/hooks/useAnalytics'
 import 'src/styles/tailwind.css'
 import 'src/styles/index.css'
 import 'src/styles/nprogress.css'
+import 'src/styles/multifile-upload.css'
 
 np.configure({ showSpinner: false })
 Router.events.on('routeChangeStart', () => np.start())

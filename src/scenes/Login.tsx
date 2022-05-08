@@ -53,8 +53,10 @@ const LoginForm = () => {
       toaster.danger(error.details)
       return
     }
-    console.log(data)
-    storage.token.set(data.idToken)
+    storage.auth.set({
+      user: data.user,
+      idToken: data.idToken
+    })
     router.push(router.query.then as string ?? '/')
   }
 

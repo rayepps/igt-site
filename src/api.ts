@@ -45,6 +45,16 @@ const createApi = () => {
       >({
         module: 'auth',
         function: 'signup'
+      }),
+      startReset: endpoint<{ 
+        email: string; 
+      }, {}>({
+        module: 'auth',
+        function: 'start-reset'
+      }),
+      finishReset: endpoint<{ id: string; code: string; password: string }, { user: t.User; idToken: string }>({
+        module: 'auth',
+        function: 'finish-reset'
       })
     },
     listings: {
@@ -55,6 +65,7 @@ const createApi = () => {
           order?: t.ListingOrder
           keywords?: string
           categoryId?: string
+          posterId?: string
           near?: {
             zip: number
             proximity: number
@@ -83,6 +94,24 @@ const createApi = () => {
       >({
         module: 'listings',
         function: 'add'
+      }),
+      update: endpoint<
+        {
+          id: string
+          title: string
+          categoryId: string
+          description: string
+          price: number | null
+          images: t.Asset[]
+          videoUrl: string | null
+          status: t.ListingStatus
+        },
+        {
+          listing: t.Listing
+        }
+      >({
+        module: 'listings',
+        function: 'update'
       }),
       findBySlug: endpoint<
         {
@@ -162,6 +191,15 @@ const createApi = () => {
       >({
         module: 'users',
         function: 'search'
+      }),
+      getSelf: endpoint<
+        {},
+        {
+          user: t.User
+        }
+      >({
+        module: 'users',
+        function: 'get-self'
       })
     },
     sponsors: {
@@ -173,6 +211,17 @@ const createApi = () => {
       >({
         module: 'sponsors',
         function: 'list'
+      }),
+      find: endpoint<
+        {
+          sponsorId: string
+        },
+        {
+          sponsor: t.Sponsor
+        }
+      >({
+        module: 'sponsors',
+        function: 'find'
       }),
       create: endpoint<
         {
@@ -199,6 +248,65 @@ const createApi = () => {
       >({
         module: 'sponsors',
         function: 'update'
+      }),
+      remove: endpoint<
+        {
+          sponsorId: string
+        },
+        {}
+      >({
+        module: 'sponsors',
+        function: 'remove'
+      }),
+      addCampaign: endpoint<
+        {
+          sponsorId: string
+          name: string
+          key: string
+          images: t.Asset[]
+          video: null | Omit<t.Asset, 'id'>
+          title: null | string
+          subtext: null | string
+          cta: null | string
+          url: null | string
+        },
+        {
+          sponsor: t.Sponsor
+        }
+      >({
+        module: 'sponsors',
+        function: 'add-campaign'
+      }),
+      updateCampaign: endpoint<
+        {
+          sponsorId: string
+          key: string
+          name?: string
+          images?: t.Asset[]
+          video?: Omit<t.Asset, 'id'>
+          title?: string
+          subtext?: string
+          cta?: string
+          url?: string
+        },
+        {
+          sponsor: t.Sponsor
+        }
+      >({
+        module: 'sponsors',
+        function: 'update-campaign'
+      }),
+      removeCampaign: endpoint<
+        {
+          sponsorId: string
+          key: string
+        },
+        {
+          sponsor: t.Sponsor
+        }
+      >({
+        module: 'sponsors',
+        function: 'remove-campaign'
       })
     }
   }

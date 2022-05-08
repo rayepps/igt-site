@@ -5,7 +5,7 @@ import AdminSponsorDetailScene from 'src/scenes/Admin/SponsorDetail'
 export const getServerSideProps: GetServerSideProps<Props> = async context => {
   return {
     props: {
-      sponsorId: (context.params?.['slug'] as string) ?? ''
+      sponsorId: (context.params?.['id'] as string) ?? ''
     }
   }
 }

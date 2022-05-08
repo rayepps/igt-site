@@ -48,12 +48,12 @@ export const isAdmin = localStorageItem<boolean>('is-admin.v2', false,)
 export const skipCache = localStorageItem<boolean>('skip-cache.v2', false,)
 export const skipAnalytics = localStorageItem<boolean>('skip-analytics.v2', false,)
 export const geolocation = localStorageItem<t.GeoLocation | null>('geolocation.v2', null, '15 minutes')
-export const token = localStorageItem<string | null>('token.v2', null)
+export const auth = localStorageItem<{ idToken: string; user: t.User } | null>('auth.v2', null)
 
 export default {
   isAdmin,
   skipCache,
   skipAnalytics,
   geolocation,
-  token
+  auth
 }

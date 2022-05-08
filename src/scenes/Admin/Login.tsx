@@ -32,7 +32,10 @@ export default function AdminLoginScene() {
       toaster.danger(error.details)
       return
     }
-    storage.token.set(data.idToken)
+    storage.auth.set({
+      idToken: data.idToken,
+      user: data.user
+    })
     router.push('/hq/dashboard')
   }
 

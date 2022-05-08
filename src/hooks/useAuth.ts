@@ -1,30 +1,36 @@
+import * as t from 'src/types'
 import { useState, useEffect } from 'react'
 import storage from 'src/local-storage'
 
 export const useAuth = () => {
-  const [token, setToken] = useState<string | null>(null)
+  const [state, setState] = useState<{
+    idToken: string
+    user: t.User
+   } | null>(null)
 
-  const loadToken = (): string | null => {
-    const tokenInStorage = storage.token.get()
-    if (!tokenInStorage) return null
-    setToken(tokenInStorage)
-    return tokenInStorage
+  const loadToken = (): {
+    idToken: string
+    user: t.User
+   } | null => {
+    const stored = storage.auth.get()
+    if (!stored) return null
+    setState(stored)
+    return stored
   }
 
   const logout = () => {
-    storage.token.clear()
-    setToken(null)
+    storage.auth.clear()
+    setState(null)
   }
 
   useEffect(() => {
     loadToken()
   }, [])
 
-  console.log('token: ', token)
-
   return {
-    token,
-    isAuthenticated: !!token,
+    token: state?.idToken,
+    user: state?.user,
+    isAuthenticated: !!state,
     refresh: loadToken,
     logout
   }

@@ -2,22 +2,18 @@ import _ from 'radash'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  HiOutlineLocationMarker,
-  HiArrowNarrowRight,
-  HiOutlineTag,
-  HiOutlineBell,
-  HiOutlineCash,
-  HiOutlinePencil
+  HiOutlinePencil,
+  HiOutlineTrash
 } from 'react-icons/hi'
 import { useFetch } from 'src/hooks'
 import api from 'src/api'
 import * as t from 'src/types'
 import AdminSidebar from 'src/components/admin/AdminSidebar'
 import { toaster } from 'evergreen-ui'
-import HorizontalGallery from 'src/components/HorizontalGallery'
 import { useAuth } from 'src/hooks/useAuth'
 import EditSponsorModal from 'src/components/admin/sponsor/EditSponsorModal'
 import CreateSponsorModal from 'src/components/admin/sponsor/CreateSponsorModal'
+import RemoveSponsorModal from 'src/components/admin/sponsor/RemoveSponsorModal'
 
 export default function AdminSponsorsScene() {
   const listSponsorsRequest = useFetch(api.sponsors.list)
@@ -25,8 +21,9 @@ export default function AdminSponsorsScene() {
   const auth = useAuth()
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editingSponsor, setEditingSponsor] = useState<null | t.Sponsor>(null)
+  const [removingSponsor, setRemovingSponsor] = useState<null | t.Sponsor>(null)
   useEffect(() => {
-    listCategoriesRequest.fetch({}, { token: auth.refresh()! })
+    listCategoriesRequest.fetch({}, { token: auth.refresh()?.idToken! })
   }, [])
   const listSponsors = async () => {
     const { error } = await listSponsorsRequest.fetch(
@@ -50,8 +47,11 @@ export default function AdminSponsorsScene() {
   const quitCreatingSponsor = () => {
     setAddModalOpen(false)
   }
-  const startEditingSponsor = (cat: t.Sponsor) => {
-    setEditingSponsor(cat)
+  const startEditingSponsor = (s: t.Sponsor) => {
+    setEditingSponsor(s)
+  }
+  const startRemovingSponsor = (s: t.Sponsor) => {
+    setRemovingSponsor(s)
   }
   useEffect(() => {
     if (!auth.token) return
@@ -66,14 +66,23 @@ export default function AdminSponsorsScene() {
           sponsor={editingSponsor}
           onClose={quitEditingSponsor}
           onCancel={quitEditingSponsor}
-          onComplete={quitEditingSponsor}
+          onComplete={_.chain(quitEditingSponsor, listSponsors)}
+        />
+      )}
+      {removingSponsor && (
+        <RemoveSponsorModal
+          open
+          sponsor={removingSponsor}
+          onClose={_.partial(setRemovingSponsor, false)}
+          onCancel={_.partial(setRemovingSponsor, false)}
+          onComplete={_.chain(_.partial(setRemovingSponsor, false), listSponsors)}
         />
       )}
       <CreateSponsorModal
         open={addModalOpen}
         onCancel={quitCreatingSponsor}
         onClose={quitCreatingSponsor}
-        onComplete={quitCreatingSponsor}
+        onComplete={_.chain(quitCreatingSponsor, listSponsors)}
       />
       <div className="flex flex-row bg-slate-100">
         <AdminSidebar />
@@ -90,6 +99,7 @@ export default function AdminSponsorsScene() {
             sponsors={listSponsorsRequest.data?.sponsors ?? []}
             loading={listSponsorsRequest.loading}
             onEdit={startEditingSponsor}
+            onRemove={startRemovingSponsor}
           />
         </div>
       </div>
@@ -97,70 +107,62 @@ export default function AdminSponsorsScene() {
   )
 }
 
-const SponsorsTable = ({ 
-  sponsors, 
+const SponsorsTable = ({
+  sponsors,
   loading,
-  onEdit
-}: { 
+  onEdit,
+  onRemove
+}: {
   sponsors: t.Sponsor[]
-  loading: boolean 
-  onEdit?: (cat: t.Sponsor) => void
+  loading: boolean
+  onEdit?: (s: t.Sponsor) => void,
+  onRemove?: (s: t.Sponsor) => void
 }) => {
-  const handleAllCheck = () => {}
-  const handleCheck = (sponsor: t.Sponsor) => () => {}
   const editSponsor = (sponsor: t.Sponsor) => () => {
     onEdit?.(sponsor)
+  }
+  const removeSponsor = (sponsor: t.Sponsor) => () => {
+    onRemove?.(sponsor)
   }
   return (
     <table className="w-full">
       <thead className="border-y border-slate-100">
         <tr>
-          <td className="border-r border-slate-100 py-4 pl-4 pr-2">
-            <input type="checkbox" onChange={handleAllCheck} />
-          </td>
           <td className="border-r border-slate-100 p-4 font-bold">Name</td>
           <td className="border-r border-slate-100 p-4 font-bold">Status</td>
           <td className="border-r border-slate-100 p-4 font-bold">Tier</td>
           <td className="border-r border-slate-100 p-4 font-bold">Categories</td>
-          <td className="border-r border-slate-100 p-4 font-bold">Campaigns</td>
           <td></td>
         </tr>
       </thead>
       <tbody>
         {sponsors.map((sponsor, idx) => (
-          <>
-            <tr key={sponsor.id} className={`border-b border-slate-100 ${idx % 2 === 0 && 'bg-slate-50'}`}>
-              <td className="py-4 pl-4 pr-2 border-r border-slate-100">
-                <input type="checkbox" />
-              </td>
-              <td className="p-4 border-r border-slate-100">
-                <Link href={`/hq/sponsors/${sponsor.id}`} passHref>
-                  <a className="hover:underline">{sponsor.name}</a>
-                </Link>
-              </td>
-              <td className="p-4 border-r border-slate-100">
-                <span>{_.camalCase(sponsor.status)}</span>
-              </td>
-              <td className="p-4 border-r border-slate-100">
-                <span>{_.camalCase(sponsor.tier)}</span>
-              </td>
-              <td className="p-4 border-r border-slate-100">
-                {sponsor.categories.map((cat) => (
-                  <span key={cat.id}>{cat.label}</span>
-                ))}
-              </td>
-              <td className="p-4 border-r border-slate-100">
-                {sponsor.campaigns.map((camp) => (
-                  <span>{camp.name}</span>
-                ))}
-              </td>
-              <td className="py-4 pl-4 pr-1">
-                <button className="rounded bg-slate-100 p-2 group hover:bg-black" onClick={editSponsor(sponsor)}>
-                  <HiOutlinePencil className="text-slate-500 group-hover:text-white" />
-                </button>
-              </td>
-            </tr>
-          </>
+          <tr key={sponsor.id} className={`border-b border-slate-100 ${idx % 2 === 0 && 'bg-slate-50'}`}>
+            <td className="p-4 border-r border-slate-100">
+              <Link href={`/hq/sponsors/${sponsor.id}`} passHref>
+                <a className="hover:underline">{sponsor.name}</a>
+              </Link>
+            </td>
+            <td className="p-4 border-r border-slate-100">
+              <span>{_.camalCase(sponsor.status)}</span>
+            </td>
+            <td className="p-4 border-r border-slate-100">
+              <span>{_.camalCase(sponsor.tier)}</span>
+            </td>
+            <td className="p-4 border-r border-slate-100">
+              {sponsor.categories.map(cat => (
+                <span key={cat.id}>{cat.label}</span>
+              ))}
+            </td>
+            <td className="py-4 pl-4 pr-1">
+              <button className="rounded bg-slate-100 p-2 group hover:bg-black" onClick={editSponsor(sponsor)}>
+                <HiOutlinePencil className="text-slate-500 group-hover:text-white" />
+              </button>
+              <button className="ml-2 rounded bg-slate-100 p-2 group hover:bg-red-600" onClick={removeSponsor(sponsor)}>
+                <HiOutlineTrash className="text-slate-500 group-hover:text-white" />
+              </button>
+            </td>
+          </tr>
         ))}
       </tbody>
     </table>

@@ -47,7 +47,12 @@ const ListingInfo = ({ listing }: { listing: t.Listing }) => {
   return (
     <div>
       <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-3xl font-semibold">{listing.title}</h1>
+        <div className="flex flex-row items-center">
+          <h1 className="text-3xl font-semibold">{listing.title}</h1>
+          {listing.status === 'sold' && (
+            <span className="ml-4 uppercase text-sm p-1 bg-red-600 font-bold text-white">sold</span>
+          )}
+        </div>
         <div>
           <HiHeart size={32} />
         </div>

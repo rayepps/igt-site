@@ -88,7 +88,10 @@ const SignupForm = () => {
       toaster.danger(error.details)
       return
     }
-    storage.token.set(data.idToken)
+    storage.auth.set({
+      user: data.user,
+      idToken: data.idToken
+    })
     router.push((router.query.to as string) ?? '/')
   }
 

@@ -20,23 +20,24 @@ import Heading from 'src/components/Heading'
 import ListingCard from 'src/components/ListingCard'
 import fmt from 'src/fmt'
 
-export default function PostListingScene({
-  categories,
-  sponsors
+export default function EditListingScene({
+  listing,
+  sponsors,
+  categories
 }: {
-  categories: t.Category[]
+  listing: t.Listing
   sponsors: t.Sponsor[]
+  categories: t.Category[]
 }) {
+  console.log(listing)
   return (
     <div className="flex flex-row justify-center pb-20">
       <div className="max-w-7xl w-full flex flex-row items-start">
         <div className="pt-8 mr-8 grow">
-          <PostListingForm categories={categories} />
+          <EditListingForm listing={listing} categories={categories} />
         </div>
         <div className="min-w-[300px] pt-8">
-          <Heading>Browse Classified</Heading>
-          <CategoryPanel categories={categories} />
-          <Heading className="mt-8">Our Sponsors</Heading>
+          <Heading>Our Sponsors</Heading>
           <VerticalSponsorsPanel sponsors={sponsors} />
         </div>
       </div>
@@ -50,14 +51,15 @@ type FormModel = {
   description: string
   price: number | null
   videoUrl: string | null
+  status: t.ListingStatus
 }
 
-const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
+const EditListingForm = ({ categories, listing }: { categories: t.Category[]; listing: t.Listing }) => {
   const router = useRouter()
   const auth = useAuth()
-  const [currentListing, setCurrentListing] = useState<Partial<t.Listing> | null>(null)
-  const postListingRequest = useFetch(api.listings.post)
-  const [assets, setAssets] = useState<t.Asset[]>([])
+  const updateListingRequest = useFetch(api.listings.update)
+  const [assets, setAssets] = useState<t.Asset[]>(listing.images)
+  const [currentListing, setCurrentListing] = useState<t.Listing>(listing)
   const form = useFormation<FormModel>(
     {
       title: yup.string().required('Title is required'),
@@ -69,40 +71,23 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
         .positive()
         .transform(value => (isNaN(value) ? null : value))
         .nullable(),
-      videoUrl: yup.string().url().nullable()
+      videoUrl: yup.string().url().nullable(),
+      status: yup.string()
     },
     {
-      title: '',
-      categoryId: '',
-      description: '',
-      price: null,
-      videoUrl: null
+      title: listing.title,
+      categoryId: listing.categoryId,
+      description: listing.description,
+      price: listing.price || 0,
+      videoUrl: listing.video?.url ?? '',
+      status: listing.status
     }
   )
-
-  const submit = async (values: FormModel) => {
-    const { error, data } = await postListingRequest.fetch(
-      {
-        title: values.title,
-        categoryId: values.categoryId as string,
-        description: values.description,
-        price: values.price,
-        videoUrl: values.videoUrl,
-        images: assets
-      },
-      { token: auth.token! }
-    )
-    if (error) {
-      console.error(error)
-      toaster.danger(error.details)
-      return
-    }
-    router.push('/listings')
-  }
 
   const vals = form.watch()
   useEffect(() => {
     setCurrentListing({
+      ...listing,
       title: vals.title,
       categoryId: vals.categoryId,
       category: categories.find(c => c.id === vals.categoryId)!,
@@ -114,20 +99,41 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
             url: vals.videoUrl
           }
         : null,
-      status: 'available',
-      images: assets,
-      location: auth.user?.location
+      status: vals.status,
+      images: assets
     })
-  }, [JSON.stringify(vals), assets, auth.user?.location])
+  }, [JSON.stringify(vals), assets])
+
+  const submit = async (values: FormModel) => {
+    const { error, data } = await updateListingRequest.fetch(
+      {
+        id: listing.id,
+        title: values.title,
+        categoryId: values.categoryId as string,
+        description: values.description,
+        price: values.price,
+        videoUrl: values.videoUrl,
+        images: assets,
+        status: values.status
+      },
+      { token: auth.token! }
+    )
+    if (error) {
+      console.error(error)
+      toaster.danger(error.details)
+      return
+    }
+    router.push(`/listing/${listing.slug}`)
+  }
 
   return (
     <div className="max-w-md mr-8">
-      <h1 className="text-4xl mb-4">Create Classified Listing - Details</h1>
+      <h1 className="text-4xl mb-4">Update Listing</h1>
       <div className="mb-4">
         <label>Category</label>
         <select
           className="border border-gray-200 p-2 w-full"
-          disabled={postListingRequest.loading}
+          disabled={updateListingRequest.loading}
           placeholder="Select category"
           {...form.register('categoryId')}
         >
@@ -145,7 +151,7 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
         <label>Title</label>
         <input
           className="border border-gray-200 p-2 w-full"
-          disabled={postListingRequest.loading}
+          disabled={updateListingRequest.loading}
           type="text"
           placeholder="Glock 17 gen 5"
           {...form.register('title')}
@@ -156,7 +162,7 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
         <label>Description</label>
         <textarea
           className="border border-gray-200 p-2 w-full"
-          disabled={postListingRequest.loading}
+          disabled={updateListingRequest.loading}
           placeholder="Good condition. Fired twice. Can meet at..."
           {...form.register('description')}
         />
@@ -170,7 +176,7 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
           <BsCurrencyDollar className="text-gray-400" />
           <input
             className="grow"
-            disabled={postListingRequest.loading}
+            disabled={updateListingRequest.loading}
             type="number"
             min={0}
             max={10000}
@@ -184,7 +190,7 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
         <label>Video</label>
         <input
           className="border border-gray-200 p-2 w-full"
-          disabled={postListingRequest.loading}
+          disabled={updateListingRequest.loading}
           type="text"
           placeholder="https://www.youtube.com/watch?v=6UtgKCBqMFU"
           {...form.register('videoUrl')}
@@ -195,15 +201,28 @@ const PostListingForm = ({ categories }: { categories: t.Category[] }) => {
       </div>
       <div className="mb-4">
         <label>Images</label>
-        <MultiImageUpload onChange={setAssets} />
+        <MultiImageUpload onChange={setAssets} initial={listing.images} />
+      </div>
+      <div className="mb-4">
+        <fieldset>
+          <legend>Staus:</legend>
+          <div>
+            <input {...form.register('status')} type="radio" id="available" name="status" value="available" />
+            <label htmlFor="available">Available</label>
+          </div>
+          <div>
+            <input {...form.register('status')} type="radio" id="sold" name="status" value="sold" />
+            <label htmlFor="sold">Sold</label>
+          </div>
+        </fieldset>
       </div>
 
       <button
         className="w-full bg-red-600 text-white py-2"
-        disabled={postListingRequest.loading}
+        disabled={updateListingRequest.loading}
         onClick={form.createHandler(submit)}
       >
-        Post Listing
+        Update Listing
       </button>
     </div>
   )

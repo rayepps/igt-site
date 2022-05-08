@@ -13,7 +13,6 @@ export default function AdminAccountGuard({
   const auth = useAuth()
   const router = useRouter()
   useEffect(() => {
-    console.log('auth: ', auth)
     const token = auth.refresh()
     if (token) return
     router.push(redirect)
