@@ -7,7 +7,7 @@ export default function CategoryPanel({ categories }: { categories: t.Category[]
       {categories.map(cat => (
         <a
           key={cat.id}
-          href={`/category/${cat.slug}`}
+          href={`/listings?category=${cat.slug}`}
           className="block mb-2 last:mb-0 hover:underline text-lg whitespace-nowrap"
         >
           {cat.label}

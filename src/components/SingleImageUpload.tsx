@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 
 // const url = "https://api.cloudinary.com/v1_1/demo/image/upload";
 // const form = document.querySelector("form");

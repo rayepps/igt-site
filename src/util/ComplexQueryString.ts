@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import flat from 'flat'
 
 const typify = (obj: Record<string, any>, overrides: Record<string, (str: string) => any> = {}): Record<string, any> => {

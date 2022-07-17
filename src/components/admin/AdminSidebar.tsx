@@ -9,6 +9,7 @@ export default function AdminSidebar({}: {}) {
     sponsors: router.pathname.startsWith('/hq/sponsors'),
     listings: router.pathname.startsWith('/hq/listings'),
     accounts: router.pathname.startsWith('/hq/accounts'),
+    reports: router.pathname.startsWith('/hq/reports')
   }
   const classNames = {
     active: 'text-lg bg-red-500 rounded px-2 py-1 block text-white font-bold',
@@ -53,6 +54,11 @@ export default function AdminSidebar({}: {}) {
         <div className="mb-4">
           <Link href="/hq/listings" passHref>
             <a className={classForState('listings')}>Listings</a>
+          </Link>
+        </div>
+        <div className="mb-4">
+          <Link href="/hq/reports" passHref>
+            <a className={classForState('reports')}>Reports</a>
           </Link>
         </div>
       </div>

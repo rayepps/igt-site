@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import api from '@exobase/client-builder'
 import * as t from './types'
 import config from './config'
@@ -16,6 +16,7 @@ const skipCache = (config: AxiosRequestConfig): AxiosRequestConfig => {
 }
 
 const appendSkipCacheHeader = (config: AxiosRequestConfig) => {
+  // return skipCache(config)
   if (typeof window === 'undefined') return config
   if (!storage.skipCache.get()) return config
   return skipCache(config)
@@ -60,15 +61,15 @@ const createApi = () => {
     listings: {
       search: endpoint<
         {
-          pageSize?: number
+          size?: number
           page?: number
           order?: t.ListingOrder
           keywords?: string
-          categoryId?: string
-          posterId?: string
+          category?: string
+          postedById?: string
           near?: {
-            zip: number
-            proximity: number
+            zip: string
+            proximityInMiles: number
           }
         },
         {
@@ -113,6 +114,10 @@ const createApi = () => {
         module: 'listings',
         function: 'update'
       }),
+      delete: endpoint<{ id: string }, {}>({
+        module: 'listings',
+        function: 'delete'
+      }),
       findBySlug: endpoint<
         {
           slug: string
@@ -123,6 +128,17 @@ const createApi = () => {
       >({
         module: 'listings',
         function: 'find-by-slug'
+      }),
+      findById: endpoint<
+        {
+          id: string
+        },
+        {
+          listing: t.Listing
+        }
+      >({
+        module: 'listings',
+        function: 'find-by-id'
       })
     },
     categories: {
@@ -307,6 +323,43 @@ const createApi = () => {
       >({
         module: 'sponsors',
         function: 'remove-campaign'
+      })
+    },
+    reports: {
+      list: endpoint<{
+
+      }, {
+        reports: t.ListingReport[]
+      }
+      >({
+        module: 'reports',
+        function: 'list'
+      }),
+      submit: endpoint<{
+        listingId: string
+        message: string
+      }, {
+        report: t.ListingReport
+      }>({
+        module: 'reports',
+        function: 'submit'
+      }),
+      dismiss: endpoint<{
+        id: string
+      }, {
+        report: t.ListingReport
+      }>({
+        module: 'reports',
+        function: 'dismiss'
+      })
+    },
+    messaging: {
+      sendContactUs: endpoint<{
+        email: string
+        message: string
+      }, {}>({
+        module: 'messaging',
+        function: 'send-contact-us'
       })
     }
   }

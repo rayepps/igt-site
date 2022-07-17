@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import { atom, selector } from 'recoil'
 
 export const subscribeModalOpenState = atom({

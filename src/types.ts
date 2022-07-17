@@ -85,3 +85,37 @@ export type Listing = {
   updatedAt: number
   expiresAt: number
 }
+
+export type ElevatedListing = Listing & {
+  user: Pick<User, 'id' | 'fullName' | 'email'>
+}
+
+export type ListingReport = {
+  id: string
+  listingId: string
+  status: 'pending' | 'dismissed'
+  listing: ElevatedListing
+  reports: {
+    anonymous: boolean
+    user: Pick<User, 'id' | 'email' | 'fullName'> | null
+    timestamp: number
+    snapshot: ElevatedListing
+    message: string
+  }[]
+  dismissedAt: number
+  dismissedBy: Pick<User, 'id' | 'email' | 'fullName'>
+  expiresAt: number
+  createdAt: number
+  updatedAt: number
+}
+
+export type LocationDistance = '10' | '20' | '50' | '100' | '150'
+
+export type ListingSearchQuery = {
+  category?: string
+  keywords?: string
+  zip?: string
+  distance?: LocationDistance
+  page?: number
+  size?: number
+}

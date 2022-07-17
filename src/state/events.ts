@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import { atom, atomFamily, selector } from 'recoil'
 import * as t from '../types'
 import ComplexQueryString from 'src/util/ComplexQueryString'

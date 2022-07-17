@@ -4581,10 +4581,15 @@ quick-lru@^5.1.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
-radash@^1.12.0, radash@^1.5.2:
+radash@^1.5.2:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/radash/-/radash-1.12.0.tgz#9275c952f025efd177f6c866dde53f043237e8c9"
   integrity sha512-WzfQsK1c27qBlzVyTojwcXLrTUY9u/CyjQDimxxWJbbnIYZgRd1hINwKSM+XDxyed9elu6nEF3FzVIf81ij/ig==
+
+radash@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/radash/-/radash-2.1.0.tgz#8d2cf9cb95c1523ab826019fc30cca7d8417808d"
+  integrity sha512-0fPuvaTKtVEJTMdXLSqE6NxDHEqspwBF0dVoDtNdP+/Er4e+zUIoPDAaWhjtI84jeW95wWRgDvy8teF+srcreg==
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.1.0"

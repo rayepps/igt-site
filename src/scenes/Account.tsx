@@ -89,7 +89,7 @@ const ListingsTable = ({
           <tr key={listing.id} className={`border-b border-slate-100 ${idx % 2 === 0 && 'bg-slate-50'}`}>
             <td className="p-4 border-r border-slate-100">
               <a href={`/listing/${listing.slug}`} target="_blank" className="flex flex-row group items-center">
-                <span className="group-hover:underline">{listing.title}</span>
+                <span className="group-hover:underline block mr-2">{listing.title}</span>
                 <HiOutlineExternalLink className="text-slate-800" />
               </a>
             </td>

@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import { useState } from 'react'
 import Link from 'next/link'
 import { HiOutlineLocationMarker, HiArrowNarrowRight } from 'react-icons/hi'

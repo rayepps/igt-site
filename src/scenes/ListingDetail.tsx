@@ -10,7 +10,7 @@ import storage from 'src/local-storage'
 import CategoryPanel from 'src/components/CategoryPanel'
 import VerticalSponsorsPanel from 'src/components/VerticalSponsorsPanel'
 import Heading from 'src/components/Heading'
-import { HiHeart } from 'react-icons/hi'
+import { HiHeart, HiFlag } from 'react-icons/hi'
 import GridGallery from 'src/components/GridGallery'
 import { useState } from 'react'
 import Pill from 'src/components/Pill'
@@ -24,11 +24,17 @@ export default function ListingDetail({
   sponsors: t.Sponsor[]
   listing: t.Listing
 }) {
+
+  const router = useRouter()
+  const flagListing = () => {
+    router.push(`/report-listing?listingId=${listing.id}`)
+  }
+
   return (
     <div className="flex flex-row justify-center pb-20">
       <div className="max-w-7xl w-full flex flex-row items-start">
         <div className="pt-8 mr-8 grow">
-          <ListingInfo listing={listing} />
+          <ListingInfo listing={listing} onFlagListing={flagListing} />
         </div>
         <div className="min-w-[300px] mt-8">
           <Heading>Browse Classified</Heading>
@@ -41,7 +47,13 @@ export default function ListingDetail({
   )
 }
 
-const ListingInfo = ({ listing }: { listing: t.Listing }) => {
+const ListingInfo = ({ 
+  listing,
+  onFlagListing
+}: { 
+  listing: t.Listing 
+  onFlagListing?: () => void
+}) => {
   console.log(listing)
   const [image, setImage] = useState(listing.images[0] ?? null)
   return (
@@ -53,8 +65,13 @@ const ListingInfo = ({ listing }: { listing: t.Listing }) => {
             <span className="ml-4 uppercase text-sm p-1 bg-red-600 font-bold text-white">sold</span>
           )}
         </div>
-        <div>
-          <HiHeart size={32} />
+        <div className="flex flex-row">
+          <button onClick={onFlagListing}>
+            <HiFlag size={32} />
+          </button>
+          <button>
+            <HiHeart size={32} />
+          </button>
         </div>
       </div>
       <GridGallery images={listing.images} current={image} onImageClick={setImage} />

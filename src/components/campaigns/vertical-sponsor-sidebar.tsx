@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import * as t from 'src/types'
 
 export default function VerticalSponsorSidebar_CampaignElement({ campaign }: {

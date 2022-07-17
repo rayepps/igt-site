@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import { ReactNode } from 'react'
 import * as t from 'src/types'
 import ListingCard from './ListingCard'

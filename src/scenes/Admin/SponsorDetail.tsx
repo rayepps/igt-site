@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import * as yup from 'yup'
 import { ChangeEventHandler, useEffect, useState } from 'react'
 import Link from 'next/link'

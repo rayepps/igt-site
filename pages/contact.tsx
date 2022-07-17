@@ -1,7 +1,7 @@
 import type { GetServerSidePropsResult, NextPage, NextPageContext } from 'next'
 import Footer from 'src/components/Footer'
 import Header from 'src/components/Header'
-import SearchScene from 'src/scenes/Search'
+import ContactScene from 'src/scenes/Contact'
 import * as t from 'src/types'
 import api from 'src/api'
 
@@ -29,14 +29,14 @@ type Props = {
   sponsors: t.Sponsor[]
 }
 
-const SearchPage: NextPage<Props> = ({ categories, sponsors }) => {
+const ContactPage: NextPage<Props> = ({ categories, sponsors }) => {
   return (
     <>
       <Header />
-      <SearchScene categories={categories} sponsors={sponsors} />
+      <ContactScene categories={categories} sponsors={sponsors} />
       <Footer />
     </>
   )
 }
 
-export default SearchPage
+export default ContactPage

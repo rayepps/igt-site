@@ -1,4 +1,4 @@
-import _ from 'radash'
+import * as _ from 'radash'
 import { ChangeEventHandler, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { matchSorter } from 'match-sorter'
